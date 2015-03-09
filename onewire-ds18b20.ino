@@ -91,8 +91,8 @@ void loop() {
 
 //heartbeat function
 void flashLED(){
-    digitalWrite(led, HIGH);
+    digitalWrite(ledPin, HIGH);
     delay(500);
-    digitalWrite(led, LOW);
+    digitalWrite(ledPin, LOW);
     delay(500);
 }
