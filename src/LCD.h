@@ -12,6 +12,10 @@ public:
   void line2(String text);
   void moveCursorLine(int line);
   void clearLine(int line);
+
+private:
+  String _line1;
+  String _line2;
 };
 
 #endif
