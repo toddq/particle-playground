@@ -1,3 +1,4 @@
+#include "ClickButton/ClickButton.h"
 #include "Encoder/Encoder.h"
 #include "Rotary/Rotary.h"
 #include "RotaryEncoder/RotaryEncoder.h"
@@ -14,14 +15,16 @@ void initRotaryEncoder();
 void rotate2();
 void rotate3();
 void dumpWifi();
+void processRotaryButton();
 
 // Encoder myEnc(ROTARY_1, ROTARY_2);
 // Rotary rotary(ROTARY_1, ROTARY_2);
-RotaryEncoder rotary(ROTARY_1, ROTARY_2);
+RotaryEncoder rotary(ROTARY_1, ROTARY_2, ROTARY_BUTTON);
 
 long oldPosition  = 0;
 int value = 60;
 int value2 = 0;
+int buttonState = 0;
 
 void setup() {
   delay(2000);
@@ -34,6 +37,16 @@ void setup() {
 
 void loop() {
     // processEncoder();
+    processRotaryButton();
+}
+
+void processRotaryButton() {
+  int newButtonState = digitalRead(ROTARY_BUTTON);
+  if (newButtonState != buttonState) {
+    buttonState = newButtonState;
+    digitalWrite(LED, !buttonState);
+    Serial.printlnf("button: %d", buttonState);
+  }
 }
 
 void dumpWifi() {
@@ -81,7 +94,8 @@ void rotate2() {
 
 void rotate3() {
   value += rotary.process();
-  Serial.printf("\r%d    ", value);
+  // Serial.printf("\r%d    ", value);
+  Serial.println(value);
 }
 
 // rotate is called anytime the rotary inputs change state.
