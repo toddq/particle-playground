@@ -6,11 +6,13 @@
 #define ROTARY_1 D2
 #define ROTARY_2 D3
 #define ROTARY_BUTTON D4
+#define LED D7
 
 void initRotary();
 void rotate();
 void initRotaryEncoder();
 void rotate2();
+void rotate3();
 void dumpWifi();
 
 // Encoder myEnc(ROTARY_1, ROTARY_2);
@@ -25,13 +27,13 @@ void setup() {
   delay(2000);
 //   initRotary();
   initRotaryEncoder();
+  pinMode(LED, OUTPUT);
   Serial.println("Starting up...");
   // dumpWifi();
 }
 
 void loop() {
     // processEncoder();
-
 }
 
 void dumpWifi() {
@@ -58,22 +60,28 @@ void initRotary() {
 
 void initRotaryEncoder() {
     Serial.println("initializing rotary encoder");
-    rotary.init(rotate2);
+    // rotary.init(rotate2);
+    rotary.init(rotate3);
 }
 
 void rotate2() {
   // Serial.println("rotate2");
-  int newPosition = rotary.process();
-  if (newPosition != oldPosition) {
-    if (newPosition > oldPosition) {
-        value++;
-    } else if (newPosition < oldPosition) {
-        value--;
-    }
-    oldPosition = newPosition;
-    value2 = -oldPosition;
-    Serial.printlnf("%d  |  %d  |  %d", value, value2, newPosition);
-  }
+  // int newPosition = rotary.process();
+  // if (newPosition != oldPosition) {
+  //   if (newPosition > oldPosition) {
+  //       value++;
+  //   } else if (newPosition < oldPosition) {
+  //       value--;
+  //   }
+  //   oldPosition = newPosition;
+  //   value2 = -oldPosition;
+  //   Serial.printlnf("%d  |  %d  |  %d", value, value2, newPosition);
+  // }
+}
+
+void rotate3() {
+  value += rotary.process();
+  Serial.printf("\r%d    ", value);
 }
 
 // rotate is called anytime the rotary inputs change state.
