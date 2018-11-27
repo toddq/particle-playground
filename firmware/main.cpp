@@ -9,6 +9,9 @@
 #define ROTARY_BUTTON D4
 #define LED D7
 
+#define SHORT_PRESS 1
+#define LONG_PRESS -1
+
 void initRotary();
 void rotate();
 void initRotaryEncoder();
@@ -19,18 +22,23 @@ void processRotaryButton();
 
 // Encoder myEnc(ROTARY_1, ROTARY_2);
 // Rotary rotary(ROTARY_1, ROTARY_2);
-RotaryEncoder rotary(ROTARY_1, ROTARY_2, ROTARY_BUTTON);
+RotaryEncoder rotary(ROTARY_1, ROTARY_2);
+
+ClickButton rotaryButton(ROTARY_BUTTON);
 
 long oldPosition  = 0;
 int value = 60;
 int value2 = 0;
 int buttonState = 0;
+bool settingsMode = false;
 
 void setup() {
   delay(2000);
 //   initRotary();
   initRotaryEncoder();
   pinMode(LED, OUTPUT);
+  pinMode(ROTARY_BUTTON, INPUT_PULLUP);
+  
   Serial.println("Starting up...");
   // dumpWifi();
 }
@@ -38,16 +46,33 @@ void setup() {
 void loop() {
     // processEncoder();
     processRotaryButton();
+    // delay(5);
 }
 
 void processRotaryButton() {
-  int newButtonState = digitalRead(ROTARY_BUTTON);
-  if (newButtonState != buttonState) {
-    buttonState = newButtonState;
-    digitalWrite(LED, !buttonState);
-    Serial.printlnf("button: %d", buttonState);
+  rotaryButton.Update();
+  if (rotaryButton.clicks == SHORT_PRESS) {
+    if (settingsMode) {
+      Serial.println("exit settings mode");
+      settingsMode = false;
+    }
+  } else if (rotaryButton.clicks == LONG_PRESS) {
+    // setEditMode(true);
+    if (!settingsMode) {
+      Serial.println("enter settings mode");
+      settingsMode = true;
+    }
   }
 }
+
+// void processRotaryButton() {
+//   int newButtonState = digitalRead(ROTARY_BUTTON);
+//   if (newButtonState != buttonState) {
+//     buttonState = newButtonState;
+//     digitalWrite(LED, !buttonState);
+//     Serial.printlnf("button: %d", buttonState);
+//   }
+// }
 
 void dumpWifi() {
   Serial.print("Current ssid: ");
@@ -93,9 +118,21 @@ void rotate2() {
 }
 
 void rotate3() {
-  value += rotary.process();
-  // Serial.printf("\r%d    ", value);
-  Serial.println(value);
+  int rotation = rotary.process();
+  if (rotation == 0) {
+    return;
+  }
+
+  if (settingsMode) {
+    value2 += rotation;
+    Serial.printlnf("Alt: %d", value2);
+  } else {
+    value += rotation;
+    Serial.printlnf("Val: %d", value);
+  }
+  // value += rotary.process();
+  // // Serial.printf("\r%d    ", value);
+  // Serial.println(value);
 }
 
 // rotate is called anytime the rotary inputs change state.
