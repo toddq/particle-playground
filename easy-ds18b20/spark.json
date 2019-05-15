@@ -1,0 +1,7 @@
+{
+  "name": "easy-ds18b20",
+  "author": "Todd Quessenberry <todd@quessenberry.com>",
+  "license": "MIT",
+  "version": "0.1.0",
+  "description": "Yet another library for the Maxim DS18B20 1-Wire Temperature Sensor with an easy to use API."
+}
